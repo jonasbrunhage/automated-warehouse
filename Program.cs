@@ -1,12 +1,14 @@
 ﻿using System;
+using System.Threading;
 
 namespace Automated_Warehouse
 {
     class Program
     {
-        static string content = "";
-        static string name = "";
-        static string[,] shelf = new string[0, 0];
+        
+        static string[,] shelf2 = new string[0, 0];
+        static Shelf shelf = new Shelf();
+
         static int column = 0;
         static int row = 0;
         static int offset = 1;
@@ -36,7 +38,6 @@ namespace Automated_Warehouse
         }
         static void Main(string[] args)
         {
-
            
             bool runProgram = true;
             //countArray(shelf);
@@ -95,13 +96,13 @@ namespace Automated_Warehouse
             Console.WriteLine("Column:");
 
             Console.SetCursorPosition("Name:".Length + 2, 2);
-            name = Console.ReadLine();
+            shelf.Name = Console.ReadLine();
             Console.SetCursorPosition("Row:".Length + 2, 4);
             row = int.Parse(Console.ReadLine());
             Console.SetCursorPosition("Column:".Length + 2, 6);
             column = int.Parse(Console.ReadLine());
 
-            shelf = new string[row, column];
+            shelf.Containers = new Package[row, column];
             Console.Clear();
             Console.SetCursorPosition(2, 2);
             Console.WriteLine("Shelf succesfully created");
@@ -109,12 +110,13 @@ namespace Automated_Warehouse
         }
         static void PrintShelf()
         {
+
             int availibleSlots = 0;
-            for (int i = 0; i < shelf.GetLength(0); i++)
+            for (int i = 0; i < shelf.Containers.GetLength(0); i++)
             {
-                for (int j = 0; j < shelf.GetLength(1); j++)
+                for (int j = 0; j < shelf.Containers.GetLength(1); j++)
                 {
-                    if (shelf[i, j] != null)
+                    if (shelf.Containers[i, j] != null)
                     {
                         //mark selected slot
                         Console.Write("| X |");
@@ -131,46 +133,47 @@ namespace Automated_Warehouse
             //shelf[row, column]=true;
             //int slots = int.Parse(shelf[row, column]);
 
-            Console.SetCursorPosition(2, shelf.GetLength(1) + 2);
-            Console.WriteLine($"Name: {name}");
-            Console.SetCursorPosition(2, shelf.GetLength(1) + 4);
+            Console.SetCursorPosition(2, shelf.Containers.GetLength(1) + 2);
+            Console.WriteLine($"Name: {shelf.Name}");
+            Console.SetCursorPosition(2, shelf.Containers.GetLength(1) + 4);
             Console.WriteLine($"Availible slots: {availibleSlots}");
 
             //Console.WriteLine($"Availible slots: {countArray(shelf)}");
-            Console.SetCursorPosition(2, shelf.GetLength(1) + 6);
+            Console.SetCursorPosition(2, shelf.Containers.GetLength(1) + 6);
             Console.WriteLine("Press any key to continue");
 
             Console.ReadKey();
         }
         static void PlacePackage()
         {
+            Package package = new Package();
             Console.SetCursorPosition(2, 2);
             Console.WriteLine("Content:");
             Console.SetCursorPosition(2, 4);
             Console.WriteLine("Row:");
             Console.SetCursorPosition(2, 6);
             Console.WriteLine("Column:");
-
+            
             Console.SetCursorPosition("Content:".Length + 2, 2);
-            content = Console.ReadLine();
+            package.Content = Console.ReadLine();
             Console.SetCursorPosition("Row:".Length + 2, 4);
             row = int.Parse(Console.ReadLine()) - offset;
             Console.SetCursorPosition("Column:".Length + 2, 6);
             column = int.Parse(Console.ReadLine()) - offset;
             Console.Clear();
 
-            if (shelf[row, column] == null)
+            if (shelf.Containers[row, column] == null)
             {
-                shelf[row, column] = content;
+                shelf.Containers[row, column] = package;
                 Console.SetCursorPosition(2, 2);
                 Console.WriteLine("Success");
-                Console.ReadKey();
+                Thread.Sleep(2000);
             }
             else
             {
                 Console.SetCursorPosition(2, 2);
                 Console.WriteLine("Slot occupied");
-                Console.ReadKey();
+                Thread.Sleep(2000);
             }
         }
         static void FetchPackage()
@@ -186,14 +189,14 @@ namespace Automated_Warehouse
             column = int.Parse(Console.ReadLine()) - offset;
             Console.Clear();
 
-            if (shelf[row, column] != null)
+            if (shelf.Containers[row, column] != null)
             {
                 Console.SetCursorPosition(2, 2);
                 Console.WriteLine("Package successfully retrived");
-                content = shelf[row, column];
-                shelf[row, column] = null;
+                Package package = shelf.Containers[row, column];
+                shelf.Containers[row, column] = null;
                 Console.SetCursorPosition(2, 4);
-                Console.WriteLine($"Content: {content}");
+                Console.WriteLine($"Content: {package.Content}");
                 Console.SetCursorPosition(2, 6);
                 Console.WriteLine("Press any key to continue");
             }
@@ -204,13 +207,8 @@ namespace Automated_Warehouse
             }
 
             Console.ReadKey();
+            
         }
-       
-
-    }
-    public class Package
-    {
-        int row;
     }
 }
 

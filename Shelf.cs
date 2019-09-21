@@ -6,12 +6,7 @@ namespace Automated_Warehouse
 {
     class Shelf
     {
-        
-        string name;
-        //int row;
-        int column;
-        string[,] shelf;
-        public int row { get; set; }
-
+        public string Name { get; set; }
+        public Package[,] Containers = new Package[0, 0];
     }
 }
